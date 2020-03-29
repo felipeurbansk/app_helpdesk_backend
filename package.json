@@ -6,8 +6,7 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "heroku-prebuild": "npm install sqlite3 && npx knex migrate:latest",
-    "heroku-postbuild": "nodemon src/app.js",
+    "heroku-prebuild": "npx knex migrate:latest",
     "start": "nodemon src/app.js"
   },
   "dependencies": {
