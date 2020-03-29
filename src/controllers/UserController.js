@@ -1,5 +1,11 @@
 const connection = require('../database/connection')
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
+const authConfig = require('../config/auth');
+
+function generateTokenJWT( user_id = {} ) {
+    return jwt.sign( { user_id }, authConfig.secret, { expiresIn: 86400 } );
+}
 
 module.exports = {
 
@@ -14,29 +20,25 @@ module.exports = {
 
         try {
 
-            const user_bd = await connection('users')
+            let user = await connection('users')
                 .where('email', '=', email)
                 .first();
 
-            if( user_bd ) {
+            if( user ) {
                 return res.status(400).json({error: 'E-mail já cadastrado'})
             }
 
             password = await bcrypt.hash(password, 8);
-
-            console.log('entrou')
-            console.log(password)
 
             const [id] = await connection('users').insert({
                 name,
                 email,
                 password
             });
-
-            return res.json({id})
+            
+            return res.send( { token: generateTokenJWT(id) } );
 
         } catch (err) {
-            console.log(err)
             return res.status(400).json({error: "Falha no cadastro"})
         }
     },
@@ -44,20 +46,31 @@ module.exports = {
     async login( req, res) {
         const { email, password } = req.body;
 
-        const user_bd = await connection('users')
+        const user = await connection('users')
             .where('email', '=', email)
             .first();
         
-        if ( !user_bd ) {
+        if ( !user ) {
             return res.status(403).json({error: 'E-mail não cadastrado'});
         }
 
-        console.log(user_bd.password, password, await bcrypt.hash(password, 8))
-
-        console.log( await bcrypt.compare(user_bd.password, password))
+        if( !await bcrypt.compare(password, user.password) ){
+            return res.status(403).json({error: "Senha inválida"});
+        }
         
-        return res.status(400).json({error:'Chegou ao fim da linha'})
+        user.password = undefined;
+        
+        return res.send({
+            user,
+            token: generateTokenJWT( { id: user.id } )
+        });
 
+    },
+
+    async consult( req, res ) {
+        
+        res.status(200).send({success: "Deu sucesso amigo"})
     }
+    
 
 }
