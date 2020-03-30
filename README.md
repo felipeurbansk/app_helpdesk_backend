@@ -5,14 +5,16 @@ Aplicação para gestão de tickets desenvolvido em NODEJS hospedado em um servi
   
 ## Rotas
 
-```javascript
-  /user [GET] -> Retorna todos os usuários cadastrados
+Retorna todos os usuários cadastrados
+```
+  [GET] /user
 ```
 
-```javascript
-  /user [POST] -> Cadastra um novo usuário
-  
-  /** JSON **/
+Cadastra um novo usuário
+```
+  [POST] /user
+```
+```
   {
     "name": "name-user",
     "email": "email-user",
@@ -20,20 +22,22 @@ Aplicação para gestão de tickets desenvolvido em NODEJS hospedado em um servi
   }
 ```
 
-```javascript
-  /user/login [POST] -> Solicitação de login
-  
-  /** JSON **/
+Solicitação de login
+```
+  [POST] /user/login
+```
+```
   {
     "email": "email-user",
     "password": "password-user"
   }
 ```
 
-```javascript
-  /user/consult [POST] -> Solicitação de teste com middleware de autenticação
-  
-  /** JSON **/
+Endpoint com middleware de autenticação
+```
+  [POST] /user/consult
+```
+```
   {
     "authorization": "x-token-jwt",
   }
