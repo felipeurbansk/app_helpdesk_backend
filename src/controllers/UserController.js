@@ -49,13 +49,13 @@ module.exports = {
         const user = await connection('users')
             .where('email', '=', email)
             .first();
-        
+
         if ( !user ) {
-            return res.status(403).json({error: 'E-mail não cadastrado'});
+            return res.status(401).send({error: 'E-mail não cadastrado'});
         }
 
         if( !await bcrypt.compare(password, user.password) ){
-            return res.status(403).json({error: "Senha inválida"});
+            return res.status(401).send({error: "Senha inválida"});
         }
         
         user.password = undefined;
