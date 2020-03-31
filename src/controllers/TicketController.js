@@ -35,7 +35,7 @@ module.exports = {
 
     async delete(req, res){
 
-        const {id} = req.params;
+        const {id} = req.body;
 
         if (!id) {
             return req.status(400).json({error: "Parâmetro id não encontrado."})
