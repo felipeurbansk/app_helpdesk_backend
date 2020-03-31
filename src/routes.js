@@ -15,5 +15,7 @@ routes.post('/user/consult', authMiddleware, UserController.consult );
 
 routes.get('/ticket', authMiddleware, TicketController.index);
 routes.post('/ticket', authMiddleware, TicketController.create);
+routes.put('/ticket/', authMiddleware, TicketController.update);
+routes.delete('/ticket/:id', authMiddleware, TicketController.delete);
 
 module.exports = routes;
