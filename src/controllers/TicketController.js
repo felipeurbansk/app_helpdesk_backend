@@ -5,8 +5,15 @@ const format = require('date-format');
 module.exports = {
 
     async index(req, res) {
+        const user_id = req.headers.user_id;
 
-        const tickets = await connection('tickets').select('*');
+        if ( !user_id ) return res.status(403).json({error: "user_id não enviado."});
+
+        const tickets = await connection('tickets')
+            .join('users', 'users.id', '=', 'tickets.user_id')
+            .where('users.id', '=', user_id)
+            .select(['tickets.*', 'users.name', 'users.email']);
+            
 
         return res.send(tickets)
 
@@ -14,9 +21,10 @@ module.exports = {
 
     async create(req, res) {
         const {subject, description} = req.body;
+        const user_id = req.headers.user_id
 
         const [id] = await connection('tickets')
-            .insert({subject, description});
+            .insert({subject, description, user_id});
         
         return res.send({id});
     },

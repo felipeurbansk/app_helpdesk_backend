@@ -30,13 +30,14 @@ module.exports = {
 
             password = await bcrypt.hash(password, 8);
 
-            const [id] = await connection('users').insert({
-                name,
-                email,
-                password
-            });
+            const [id] = await connection('users')
+                .insert({
+                    name,
+                    email,
+                    password
+                });
             
-            return res.send( { token: generateTokenJWT(id) } );
+            return res.send( {id: id, token: generateTokenJWT(id) } );
 
         } catch (err) {
             return res.status(400).json({error: "Falha no cadastro"})
@@ -67,10 +68,5 @@ module.exports = {
 
     },
 
-    async consult( req, res ) {
-        
-        res.status(200).send({success: "Deu sucesso amigo"})
-    }
     
-
 }
