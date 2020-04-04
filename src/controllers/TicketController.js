@@ -5,16 +5,15 @@ const format = require('date-format');
 module.exports = {
 
     async index(req, res) {
-        const user_id = req.headers.user_id;
+        const {user_id, ticket_id} = req.headers;
 
         if ( !user_id ) return res.status(403).json({error: "user_id não enviado."});
 
         const tickets = await connection('tickets')
-            .join('users', 'users.id', '=', 'tickets.user_id')
-            .where('users.id', '=', user_id)
-            .select(['tickets.*', 'users.name', 'users.email']);
-            
-
+                .join('users', 'users.id', '=', 'tickets.user_id')
+                .where('users.id', '=', user_id)
+                .select(['tickets.*', 'users.name', 'users.email']);
+        console.log(tickets)
         return res.send(tickets)
 
     },
@@ -23,10 +22,15 @@ module.exports = {
         const {subject, description} = req.body;
         const user_id = req.headers.user_id
 
+        if ( !user_id ) return res.status(401).json({error: "user_id não enviado"});
+        if ( !subject ) return res.status(401).json({error: "Assunto não foi informado"});
+        if ( !description ) return res.status(401).json({error: "Descrição não foi informado"});
+
         const [id] = await connection('tickets')
             .insert({subject, description, user_id});
         
         return res.send({id});
+        
     },
 
     async update(req, res) {
@@ -46,7 +50,7 @@ module.exports = {
         const {id} = req.body;
 
         if (!id) {
-            return req.status(400).json({error: "Parâmetro id não encontrado."})
+            return res.status(400).json({error: "Parâmetro id não encontrado."})
         }
         try {
 

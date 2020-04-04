@@ -42,6 +42,6 @@ Endpoint com middleware de autenticação
 ```
 ```
   {
-    "authorization": "x-token-jwt",
+    "user_id": "x-token-jwt",
   }
 ```

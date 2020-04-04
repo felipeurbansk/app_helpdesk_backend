@@ -4,14 +4,18 @@ const connection = require('../database/connection');
 module.exports = {
 
     async index(req, res) {
-        const { ticket_id } = req.body;
+
+        const { user_id, ticket_id } = req.headers;
 
         if ( !ticket_id ) return res.status(401).json({error: 'ticket_id não foi informado'});
 
-        const response = await connection('message')
-            .where('ticket_id', '=', ticket_id);
 
-        return res.send(response);
+        const messages = await connection('message')
+            .join('tickets', 'tickets.id', '=', 'message.ticket_id')
+            .where('ticket_id', '=', ticket_id)
+            .select(['message.*', 'tickets.subject', 'tickets.description', 'tickets.created_at'])
+
+        return res.send(messages);
 
     },
 
